@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template
 import requests #first have to pip3 install requests
+import os #use if decide to try to create jinja templates
 
 app = Flask(__name__)
 
@@ -17,6 +18,11 @@ def homepage():
 
     for dict in forms_dict:
         application_list.append(dict['name'])
+
+        filepath = os.path.join('/home/hackbright/src/Shepard/templates', f"{dict['name']}.html")
+        file_obj = open(filepath, 'w')
+        file_obj.write('test')
+        file_obj.close()
 
     return render_template("homepage.html",
                            application_list=application_list)
