@@ -17,10 +17,10 @@ def homepage():
     applications_dict = {}
 
     for dict in forms_dict:
-        route = dict['name'].replace(' ', '_').lower()
-        # filepath = os.path.join('/home/hackbright/src/Shepard/templates', f"{route}.html")
-        applications_dict[dict['name']] = route
-
+        path = dict['name'].replace(' ', '_').lower()
+        applications_dict[dict['name']] = path
+        
+        # filepath = os.path.join('/home/hackbright/src/Shepard/templates', f"{path}.html")
         # file_obj = open(filepath, 'w')
         # file_obj.write('test')
         # file_obj.close()
