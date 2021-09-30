@@ -15,7 +15,10 @@
                 <div class="form-group">
                     <label class="col-form-label">{{ item['label'] }}</label>
                     {% if item['component'] in ['input', 'text', 'url'] %}
-                        <input class="form-control" type="{{ item['component'] }}" name="{{ item['name'] }}" maxlength="7" {{ item['validate'][0]['type'] }}>
+                        <input class="form-control" type="text" name="{{ item['name'] }}" min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
+                    {% endif %}
+                    {% if item['component'] in ['number'] %}
+                    <input class="form-control" type="number" name="{{ item['name'] }}" min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
                     {% endif %}
                     {% if item['component'] == 'select' %}
                         <select class="form-control" id="{{ item['name'] }}" {{ item['validate'][0]['type'] }}>
@@ -24,13 +27,22 @@
                             {% endfor %}
                         </select>
                     {% endif %}
+                    {% if item['component'] == 'checkbox' %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ item['name'] }}" value="">
+                            <label class="form-check-label">Yes</label>
+                        </div>
+                    {% endif %}
                 </div>
 
                 {% for nested_item in item['fields'] %}
                 <div class="form-group">
                     <label class="col-form-label">{{ nested_item['label'] }}</label>
                     {% if nested_item['component'] in ['input', 'text', 'url'] %}
-                        <input class="form-control" type="{{ nested_item['component'] }}" name="{{ nested_item['name'] }}" maxlength="7">
+                        <input class="form-control" type="text" name="{{ nested_item['name'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                    {% endif %}
+                    {% if nested_item['component'] == 'number' %}
+                        <input class="form-control" type="number" name="{{ nested_item['name'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
                     {% endif %}
                     {% if nested_item['component'] == 'select' %}
                         <select class="form-control" id="{{ nested_item['name'] }}">
@@ -39,13 +51,43 @@
                             {% endfor %}
                         </select>
                     {% endif %}
+                    {% if nested_item['component'] == 'checkbox' %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="{{ nested_item['name'] }}" value="">
+                            <label class="form-check-label">Yes</label>
+                        </div>
+                    {% endif %}
                 </div>
+
+                    {% for extra_nested_item in nested_item['fields'] %}
+                    <div class="form-group">
+                        <label class="col-form-label">{{ extra_nested_item['label'] }}</label>
+                        {% if extra_nested_item['component'] in ['input', 'text', 'url'] %}
+                            <input class="form-control" type="text" name="{{ extra_nested_item['name'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                        {% endif %}
+                        {% if extra_nested_item['component'] == 'number' %}
+                            <input class="form-control" type="number" name="{{ extra_nested_item['name'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                        {% endif %}
+                        {% if extra_nested_item['component'] == 'select' %}
+                            <select class="form-control" id="{{ extra_nested_item['name'] }}">
+                                {% for option in extra_nested_item['options'] %}
+                                <option>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                        {% if extra_nested_item['component'] == 'checkbox' %}
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="{{ extra_nested_item['name'] }}" value="">
+                                <label class="form-check-label">Yes</label>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% endfor %}
+                {% endfor %}
             {% endfor %}
-            
-            {% endfor %}
-                <div>
-                    <button type="submit" class="btn btn-dark">Submit</button>
-                </div>
+                <br>
+                <button class="btn btn-primary" type="submit">Submit</button>
             </form>
         {% endif %}
     {% endfor %}
