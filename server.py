@@ -3,6 +3,7 @@
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, DecimalField, SelectField, SubmitField
+from wtforms.validators import InputRequired, NumberRange, URL
 import requests
 
 
@@ -11,25 +12,25 @@ app.config['SECRET_KEY'] = 'shepherd' #needed for wtforms
 
 
 class CompanyApplication(FlaskForm):
-    company_name = StringField('What is the Company Name?')
-    ceo = StringField('What is the name of the CEO?')
-    website = StringField('Company website?')
+    company_name = StringField('What is the Company Name?', validators=[InputRequired()])
+    ceo = StringField('What is the name of the CEO?', validators=[InputRequired()])
+    website = StringField('Company website?', validators=[URL()])
     # address = StringField('Address') #just a header
-        # address1 = StringField('Address')
+        # address1 = StringField('Address', validators=[InputRequired()])
         # address2 = StringField('Address 2')
         # city = StringField('City')
     is_california_relevant = BooleanField('Will the contractor perform any work in California?')
-    total_compensation = DecimalField('What is the total compensation of all your workers?')
+    total_compensation = DecimalField('What is the total compensation of all your workers?', validators=[InputRequired(), NumberRange(min=0)])
     submit = SubmitField('Submit')
 
 class EmployeeApplication(FlaskForm):
-    applicant_name = StringField('Applicant name')
-    applicant_title = StringField('Applicant title') 
+    applicant_name = StringField('Applicant name', validators=[InputRequired()])
+    applicant_title = StringField('Applicant title', validators=[InputRequired()]) 
     submit = SubmitField('Submit')
 
 class AutoApplication(FlaskForm):
-    vin = StringField('VIN')
-    make = SelectField('Make', choices=['Honda', 'Toyota', 'BMW', 'Ford', 'Dodge'])
+    vin = StringField('VIN', validators=[InputRequired()])
+    make = SelectField('Make', choices=['Honda', 'Toyota', 'BMW', 'Ford', 'Dodge'], validators=[InputRequired()])
     submit = SubmitField('Submit')
 
 
@@ -60,8 +61,8 @@ def app_type(application):
     employee = EmployeeApplication()
     auto = AutoApplication()
 
-    # if form.validate_on_submit():
-    #     return <h1> f"{form.username.data}, {form.password.data}"
+    if company.validate_on_submit(): 
+        return 'form successfully submitted'
 
     return render_template('app_type.html', 
                             application=application, 

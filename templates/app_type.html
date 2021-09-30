@@ -16,20 +16,45 @@
 
        {{ company.company_name.label }}
        {{ company.company_name }}
+       <ul>
+        {% for error in company.company_name.errors %}
+            <li style="color:red;">{{ error }}</li>
+        {% endfor %}
+        </ul>
 
        {{ company.ceo.label }}
        {{ company.ceo }}
+       <ul>
+        {% for error in company.ceo.errors %}
+          <li style='color:red;'>{{ error }}</li>
+        {% endfor %}
+        </ul>
 
        {{ company.website.label }}
        {{ company.website }}
+       <ul>
+        {% for error in company.website.errors %}
+          <li style='color:red;'>{{ error }}</li>
+        {% endfor %}
+       </ul>
 
         <!-- address once sorted -->
 
        {{ company.is_california_relevant.label }}
        {{ company.is_california_relevant }}
+       <ul>
+        {% for error in company.is_california_relevant.errors %}
+          <li style='color:red;'>{{ error }}</li>
+        {% endfor %}
+       </ul>
 
        {{ company.total_compensation.label }}
        {{ company.total_compensation }}
+       <ul>
+        {% for error in company.total_compensation.errors %}
+          <li style='color:red;'>{{ error }}</li>
+        {% endfor %}
+       </ul>
 
        {{ company.submit() }}
    </form>
