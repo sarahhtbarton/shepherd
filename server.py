@@ -1,40 +1,17 @@
 """Server for Shepherd Tech Challenge."""
 
 from flask import Flask, render_template
+from forms import CompanyApplication, EmployeeApplication, AutoApplication
+from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, DecimalField, SelectField, SubmitField
 from wtforms.validators import InputRequired, NumberRange, URL
 import requests
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'shepherd' #needed for wtforms
 Bootstrap(app) #needed for Flask-Bootstrap
-
-
-class CompanyApplication(FlaskForm):
-    company_name = StringField('What is the Company Name?', validators=[InputRequired()])
-    ceo = StringField('What is the name of the CEO?', validators=[InputRequired()])
-    website = StringField('Company website?', validators=[URL()])
-    # address = StringField('Address') #just a header
-        # address1 = StringField('Address', validators=[InputRequired()])
-        # address2 = StringField('Address 2')
-        # city = StringField('City')
-    is_california_relevant = BooleanField('Will the contractor perform any work in California?')
-    total_compensation = DecimalField('What is the total compensation of all your workers?', validators=[InputRequired(), NumberRange(min=0)])
-    submit = SubmitField('Submit')
-
-class EmployeeApplication(FlaskForm):
-    applicant_name = StringField('Applicant name', validators=[InputRequired()])
-    applicant_title = StringField('Applicant title', validators=[InputRequired()]) 
-    submit = SubmitField('Submit')
-
-class AutoApplication(FlaskForm):
-    vin = StringField('VIN', validators=[InputRequired()])
-    make = SelectField('Make', choices=['Honda', 'Toyota', 'BMW', 'Ford', 'Dodge'], validators=[InputRequired()])
-    submit = SubmitField('Submit')
-
 
 @app.route('/')
 def homepage():
@@ -53,26 +30,64 @@ def homepage():
                            applications_dict=applications_dict)
 
 
-
-@app.route('/app_type/<application>', methods=['GET', 'POST'])
-def app_type(application):
+@app.route('/type/<application>', methods=['GET', 'POST'])
+def type(application):
     """View application."""
 
-    # not dynamic....
+    response = requests.get('https://gist.githubusercontent.com/mmahalwy/1459564f99b7511350d766daf3564169/raw/1bfa12209c5e91ced717007a4448e4b812304b74/forms.json')
+    forms_dict = response.json()
+
+    return render_template('type.html',
+                            application=application, 
+                            forms_dict=forms_dict)
+
+@app.route('/success')
+def success():
+    """View successfully submitted application"""
+
+    return render_template('success.html')
+
+
+@app.route('/company_application', methods=['GET', 'POST'])
+def company_application():
+    """View company application."""
+
     company = CompanyApplication()
-    employee = EmployeeApplication()
-    auto = AutoApplication()
 
     if company.validate_on_submit(): 
         return 'form successfully submitted'
+        # return redirect(url_for("success"))
 
-    return render_template('app_type.html', 
-                            application=application, 
-                            company=company, 
-                            employee=employee, 
+    return render_template('company_application.html', 
+                            company=company)
+
+
+@app.route('/employee_application', methods=['GET', 'POST'])
+def employee_application():
+    """View employee application."""
+
+    employee = EmployeeApplication()
+
+    if employee.validate_on_submit(): 
+        return 'form successfully submitted'
+        # return redirect(url_for("success"))
+
+    return render_template('employee_application.html', 
+                            employee=employee)
+
+
+@app.route('/auto_application', methods=['GET', 'POST'])
+def auto_application():
+    """View auto application."""
+
+    auto = AutoApplication()
+
+    if auto.validate_on_submit(): 
+        return 'form successfully submitted'
+        # return redirect(url_for("success"))
+
+    return render_template('auto_application.html', 
                             auto=auto)
-
-
 
 
 if __name__ == '__main__':
