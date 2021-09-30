@@ -1,0 +1,17 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Broker Application{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}  <!-- need to be block content for bootstrap? -->
+<div class="container">
+   
+   <h1>Employee Application</h1>
+   {{ wtf.quick_form(employee) }}
+
+</div>
+{% endblock %}
+
+{% block after_body %}{% endblock %} 
