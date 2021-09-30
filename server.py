@@ -1,6 +1,7 @@
 """Server for Shepherd Tech Challenge."""
 
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, BooleanField, DecimalField, SelectField, SubmitField
 from wtforms.validators import InputRequired, NumberRange, URL
@@ -9,6 +10,7 @@ import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'shepherd' #needed for wtforms
+Bootstrap(app) #needed for Flask-Bootstrap
 
 
 class CompanyApplication(FlaskForm):
