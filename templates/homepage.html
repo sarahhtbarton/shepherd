@@ -6,13 +6,13 @@
 {% block head %}{% endblock %}
 
 {% block body %}
-
+<div class="container">
 
   {% for app_type, app_link in applications_dict.items() %}
     <p><a href="/app_type/{{ app_link }}">{{ app_type }}</a></p>
   {% endfor %}
 
-
-  {% endblock %}
+</div>
+{% endblock %}
 
 {% block after_body %}{% endblock %} 

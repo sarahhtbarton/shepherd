@@ -6,32 +6,33 @@
 {% block head %}{% endblock %}
 
 {% block body %}
+<div class="container">
 
     {{ application }}
 <!-- not dynamic... -->
 <!-- render THIS FORM if.... -->
    <h1>Application Form {{company}}</h1>
-   <form method="POST" action="">
+   <form method="POST" action=""> <!-- have the action send to new page? -->
        {{ company.csrf_token }}
 
-       {{ company.company_name.label }}
-       {{ company.company_name }}
+       {{ company.company_name.label(class="form-label") }}
+       {{ company.company_name(class="form-control") }}
        <ul>
         {% for error in company.company_name.errors %}
             <li style="color:red;">{{ error }}</li>
         {% endfor %}
         </ul>
 
-       {{ company.ceo.label }}
-       {{ company.ceo }}
+       {{ company.ceo.label(class="form-label") }}
+       {{ company.ceo(class="form-control") }}
        <ul>
         {% for error in company.ceo.errors %}
           <li style='color:red;'>{{ error }}</li>
         {% endfor %}
         </ul>
 
-       {{ company.website.label }}
-       {{ company.website }}
+       {{ company.website.label(class="form-label") }}
+       {{ company.website(class="form-control") }}
        <ul>
         {% for error in company.website.errors %}
           <li style='color:red;'>{{ error }}</li>
@@ -40,23 +41,23 @@
 
         <!-- address once sorted -->
 
-       {{ company.is_california_relevant.label }}
-       {{ company.is_california_relevant }}
+       {{ company.is_california_relevant.label(class="form-check-label") }}
+       {{ company.is_california_relevant(class="form-check-input") }}
        <ul>
         {% for error in company.is_california_relevant.errors %}
           <li style='color:red;'>{{ error }}</li>
         {% endfor %}
        </ul>
 
-       {{ company.total_compensation.label }}
-       {{ company.total_compensation }}
+       {{ company.total_compensation.label(class="form-label") }}
+       {{ company.total_compensation(class="form-control") }}
        <ul>
         {% for error in company.total_compensation.errors %}
           <li style='color:red;'>{{ error }}</li>
         {% endfor %}
        </ul>
 
-       {{ company.submit() }}
+       {{ company.submit(class="btn btn-primary") }}
    </form>
 
 <!-- render THIS FORM if.... -->
@@ -93,7 +94,7 @@
 
 
 
-
+</div>
 {% endblock %}
 
 {% block after_body %}{% endblock %} 
