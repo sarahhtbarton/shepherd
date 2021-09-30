@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Broker Application{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %} 
+<div class="container">
+    
+    {% for app_type in forms_dict %}
+        {% if app_type['name'].replace(' ', '_').lower() == application %}
+            <h1>{{ app_type['name'] }}</h1>
+            <form action="/success" id="{{ app_type['name'].replace(' ', '_').lower() }}">
+            {% for item in app_type['fields'] %}
+                <div class="form-group">
+                    <label class="col-form-label">{{ item['label'] }}</label>
+                    {% if item['component'] in ['input', 'text', 'url'] %}
+                        <input class="form-control" type="{{ item['component'] }}" name="{{ item['name'] }}" maxlength="7" {{ item['validate'][0]['type'] }}>
+                    {% endif %}
+                    {% if item['component'] == 'select' %}
+                        <select class="form-control" id="{{ item['name'] }}" {{ item['validate'][0]['type'] }}>
+                            {% for option in item['options'] %}
+                            <option>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+
+                {% for nested_item in item['fields'] %}
+                <div class="form-group">
+                    <label class="col-form-label">{{ nested_item['label'] }}</label>
+                    {% if nested_item['component'] in ['input', 'text', 'url'] %}
+                        <input class="form-control" type="{{ nested_item['component'] }}" name="{{ nested_item['name'] }}" maxlength="7">
+                    {% endif %}
+                    {% if nested_item['component'] == 'select' %}
+                        <select class="form-control" id="{{ nested_item['name'] }}">
+                            {% for option in nested_item['options'] %}
+                            <option>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            {% endfor %}
+                <div>
+                    <button type="submit" class="btn btn-dark">Submit</button>
+                </div>
+            </form>
+        {% endif %}
+    {% endfor %}
+
+</div>
+{% endblock %}
+
+{% block after_body %}{% endblock %} 
