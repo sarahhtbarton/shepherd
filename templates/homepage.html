@@ -8,8 +8,8 @@
 {% block body %}
 <div class="container">
 
-  {% for app_type, app_link in applications_dict.items() %}
-    <p><a href="/app_type/{{ app_link }}">{{ app_type }}</a></p>
+  {% for name, path in applications_dict.items() %}
+    <p><a href="/type/{{ path }}">{{ name }}</a></p>
   {% endfor %}
 
 </div>
