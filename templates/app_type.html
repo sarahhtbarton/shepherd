@@ -6,8 +6,68 @@
 {% block head %}{% endblock %}
 
 {% block body %}
-<!-- add conditional (if application exists....) -->
+
     {{ application }}
+<!-- not dynamic... -->
+<!-- render THIS FORM if.... -->
+   <h1>Application Form {{company}}</h1>
+   <form method="POST" action="">
+       {{ company.csrf_token }}
+
+       {{ company.company_name.label }}
+       {{ company.company_name }}
+
+       {{ company.ceo.label }}
+       {{ company.ceo }}
+
+       {{ company.website.label }}
+       {{ company.website }}
+
+        <!-- address once sorted -->
+
+       {{ company.is_california_relevant.label }}
+       {{ company.is_california_relevant }}
+
+       {{ company.total_compensation.label }}
+       {{ company.total_compensation }}
+
+       {{ company.submit() }}
+   </form>
+
+<!-- render THIS FORM if.... -->
+<h1>Application Form {{employee}}</h1>
+<form method="POST" action="">
+    {{ employee.csrf_token }}
+
+    {{ employee.applicant_name.label }}
+    {{ employee.applicant_name }}
+
+    {{ employee.applicant_title.label }}
+    {{ employee.applicant_title }}
+
+    {{ company.submit() }}
+</form>
+
+<!-- render THIS FORM if.... -->
+<h1>Application Form {{auto}}</h1>
+<form method="POST" action="">
+    {{ auto.csrf_token }}
+
+    {{ auto.vin.label }}
+    {{ auto.vin }}
+
+    {{ auto.make.label }}
+    {{ auto.make }}
+
+    {{ auto.submit() }}
+</form>
+
+<!-- else -->
+<h1>form does not exist</h1>
+
+
+
+
 
 {% endblock %}
 

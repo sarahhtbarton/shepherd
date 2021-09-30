@@ -1,10 +1,36 @@
 """Server for Shepherd Tech Challenge."""
 
 from flask import Flask, render_template
-import requests #first have to pip3 install requests
-import os #use if decide to try to create jinja templates
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField, DecimalField, SelectField, SubmitField
+import requests
+
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'shepherd' #needed for wtforms
+
+
+class CompanyApplication(FlaskForm):
+    company_name = StringField('What is the Company Name?')
+    ceo = StringField('What is the name of the CEO?')
+    website = StringField('Company website?')
+    # address = StringField('Address') #just a header
+        # address1 = StringField('Address')
+        # address2 = StringField('Address 2')
+        # city = StringField('City')
+    is_california_relevant = BooleanField('Will the contractor perform any work in California?')
+    total_compensation = DecimalField('What is the total compensation of all your workers?')
+    submit = SubmitField('Submit')
+
+class EmployeeApplication(FlaskForm):
+    applicant_name = StringField('Applicant name')
+    applicant_title = StringField('Applicant title') 
+    submit = SubmitField('Submit')
+
+class AutoApplication(FlaskForm):
+    vin = StringField('VIN')
+    make = SelectField('Make', choices=['Honda', 'Toyota', 'BMW', 'Ford', 'Dodge'])
+    submit = SubmitField('Submit')
 
 
 @app.route('/')
@@ -19,22 +45,29 @@ def homepage():
     for dict in forms_dict:
         path = dict['name'].replace(' ', '_').lower()
         applications_dict[dict['name']] = path
-        
-        # filepath = os.path.join('/home/hackbright/src/Shepard/templates', f"{path}.html")
-        # file_obj = open(filepath, 'w')
-        # file_obj.write('test')
-        # file_obj.close()
 
     return render_template("homepage.html",
                            applications_dict=applications_dict)
 
 
 
-@app.route('/app_type/<application>')
+@app.route('/app_type/<application>', methods=['GET', 'POST'])
 def app_type(application):
     """View application."""
 
-    return render_template('app_type.html', application=application)
+    # not dynamic....
+    company = CompanyApplication()
+    employee = EmployeeApplication()
+    auto = AutoApplication()
+
+    # if form.validate_on_submit():
+    #     return <h1> f"{form.username.data}, {form.password.data}"
+
+    return render_template('app_type.html', 
+                            application=application, 
+                            company=company, 
+                            employee=employee, 
+                            auto=auto)
 
 
 
