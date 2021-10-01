@@ -10,18 +10,19 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'shepherd'
 Bootstrap(app)
 
+
+response = requests.get('https://gist.githubusercontent.com/mmahalwy/1459564f99b7511350d766daf3564169/raw/1bfa12209c5e91ced717007a4448e4b812304b74/forms.json')
+forms_dict = response.json()
+
+
 @app.route('/')
 def homepage():
     """View homepage."""
-    
-    response = requests.get('https://gist.githubusercontent.com/mmahalwy/1459564f99b7511350d766daf3564169/raw/1bfa12209c5e91ced717007a4448e4b812304b74/forms.json')
-    forms_dict = response.json()
 
     applications_dict = {}
 
     for dict in forms_dict:
-        path = dict['name'].replace(' ', '_').lower()
-        applications_dict[dict['name']] = path
+        applications_dict[dict['name']] = dict['name'].replace(' ', '_').lower()
 
     return render_template("homepage.html",
                            applications_dict=applications_dict)
@@ -30,63 +31,45 @@ def homepage():
 @app.route('/type/<application>', methods=['GET', 'POST'])
 def type(application):
     """View application."""
-
-    #Add cookie auth here
-
-    response = requests.get('https://gist.githubusercontent.com/mmahalwy/1459564f99b7511350d766daf3564169/raw/1bfa12209c5e91ced717007a4448e4b812304b74/forms.json')
-    forms_dict = response.json()
+    
+    shep_cookie = request.cookies.get('shep_cookie') # to set cookie in browser with javascript: document.cookie = "shep_cookie=shepherd"
 
     return render_template('type.html',
                             application=application, 
-                            forms_dict=forms_dict)
+                            forms_dict=forms_dict,
+                            shep_cookie=shep_cookie) 
 
 
 @app.route('/submit/<application>', methods=['GET', 'POST'])
 def submit(application):
     """Submit application"""
 
+    """ 
+    Pseudocode:
     # Get response data from form
-    # Have key:value pairs from forms.json
     # Combine the key:value pairs from forms.json, and json results
     # Post json to database w/user auth (Save in results.json file)
-    #(((cant write to database w/o user auth))))
-
-
-    # route_id = request.view_args['application']
-    # data = request.form
-    # data1 = request.get_json()
-    # json_data = jsonify(data)
-    # print(route_id)
-    # print(data)
-    # print(data1)
-    # print(json_data)
-    # print(request.data)
+    """
 
     if request.method == 'POST':
         flash('You successfully submited your form. If you need to make edits, you can do so below and resubmit')
         
     return redirect(url_for('edit', application=application))
 
+
 @app.route('/edit/<application>', methods=['GET', 'POST'])
 def edit(application):
     """Edit application"""
-    # Check for cookie, if user auth:
-    # Retrieve json form by id from db (or load in the file)
-    # Renders type.html with retrieved data (which routes back to /submit)
 
     forms_json = open('static/results.json').read()
     forms_dict = json.loads(forms_json)
 
+    shep_cookie = request.cookies.get('shep_cookie')
+
     return render_template('type.html',
                             application=application, 
-                            forms_dict=forms_dict)
-
-
-@app.route('/success')
-def success():
-    """View successfully submitted application"""
-
-    return render_template('success.html')
+                            forms_dict=forms_dict,
+                            shep_cookie=shep_cookie)
 
 
 
@@ -94,6 +77,14 @@ def success():
 
 
 
+
+
+
+
+
+
+
+#below can be ignored. Uses WTForms. Left in to show another approach 
 
 
 @app.route('/company_application', methods=['GET', 'POST'])
@@ -111,8 +102,6 @@ def company_application():
     is_california_relevant = company.is_california_relevant.data
     total_compensation = company.total_compensation.data
 
-    company_results = {}
-
     company_results = {
         'company_name': company_name,
         'ceo': ceo,
@@ -129,10 +118,6 @@ def company_application():
             json.dump(company_results, j)
             return redirect('/success')
 
-#     return render_template ('home.html', title='Home', data=data, form=form, employee_id=employee_id, email=email, network=network, app_name=app_name, vip_name=vip_name, pool_name=pool_name, pool_monitor=pool_monitor, pool_member=pool_member, load_balance=load_balance, ssl=ssl)
-# else:
-#     return render_template('request.html', form=form)
-
     return render_template('company_application.html', 
                             company=company)
 
@@ -143,9 +128,18 @@ def employee_application():
 
     employee = EmployeeApplication()
 
-    if employee.validate_on_submit(): 
-        return 'form successfully submitted'
-        # return redirect(url_for("success"))
+    applicant_name = employee.applicant_name.data
+    applicant_title = employee.applicant_title.data
+
+    employee_results = {
+        'applicant_name' : applicant_name,
+        'applicant_title' : applicant_title
+    }
+
+    if employee.validate_on_submit():
+        with open("/home/hackbright/src/Shepard/static/employee_results.json",'w') as j:
+            json.dump(employee_results, j)
+            return redirect('/success')
 
     return render_template('employee_application.html', 
                             employee=employee)
@@ -157,12 +151,28 @@ def auto_application():
 
     auto = AutoApplication()
 
-    if auto.validate_on_submit(): 
-        return 'form successfully submitted'
-        # return redirect(url_for("success"))
+    vin = auto.vin.data
+    make = auto.make.data
+
+    auto_results = {
+        'vin' : vin,
+        'make' : make
+    }
+
+    if auto.validate_on_submit():
+        with open("/home/hackbright/src/Shepard/static/auto_results.json",'w') as j:
+            json.dump(auto_results, j)
+            return redirect('/success')
 
     return render_template('auto_application.html', 
                             auto=auto)
+
+
+@app.route('/success')
+def success():
+    """View successfully submitted application"""
+
+    return render_template('success.html')
 
 
 if __name__ == '__main__':
