@@ -8,6 +8,11 @@
 {% block body %}
 <div class="container">
 
+  <br>
+  <h3>Welcome</h3>
+  <h6>Please click on an application below to be taken to the application form</h6>
+  <br>
+
   {% for name, path in applications_dict.items() %}
     <p><a href="/type/{{ path }}">{{ name }}</a></p>
   {% endfor %}
