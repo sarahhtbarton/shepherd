@@ -6,19 +6,29 @@
 
 {% block body %} 
 <div class="container">
-    
+
+
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
+
+
     {% for app_type in forms_dict %}
         {% if app_type['name'].replace(' ', '_').lower() == application %}
             <h1>{{ app_type['name'] }}</h1>
-            <form action="/success" id="{{ app_type['name'].replace(' ', '_').lower() }}">
+            <form action="/submit/{{ app_type['name'].replace(' ', '_').lower() }}" method="POST" enctype="application/json" id="{{ app_type['name'].replace(' ', '_').lower() }}">
             {% for item in app_type['fields'] %}
                 <div class="form-group">
                     <label class="col-form-label">{{ item['label'] }}</label>
                     {% if item['component'] in ['input', 'text', 'url'] %}
-                        <input class="form-control" type="text" name="{{ item['name'] }}" min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
+                        <input class="form-control" type="text" name="{{ item['name'] }}" value="{{ item['value'] }}" "min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
                     {% endif %}
                     {% if item['component'] in ['number'] %}
-                    <input class="form-control" type="number" name="{{ item['name'] }}" min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
+                    <input class="form-control" type="number" name="{{ item['name'] }}" name="{{ item['value'] }}" min="{{ item['validate'][-1]['value'] }}" {{ item['validate'][0]['type'] }}>
                     {% endif %}
                     {% if item['component'] == 'select' %}
                         <select class="form-control" id="{{ item['name'] }}" {{ item['validate'][0]['type'] }}>
@@ -39,10 +49,10 @@
                 <div class="form-group">
                     <label class="col-form-label">{{ nested_item['label'] }}</label>
                     {% if nested_item['component'] in ['input', 'text', 'url'] %}
-                        <input class="form-control" type="text" name="{{ nested_item['name'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                        <input class="form-control" type="text" name="{{ nested_item['name'] }}" value="{{ nested_item['value'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
                     {% endif %}
                     {% if nested_item['component'] == 'number' %}
-                        <input class="form-control" type="number" name="{{ nested_item['name'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                        <input class="form-control" type="number" name="{{ nested_item['name'] }}" value="{{ nested_item['value'] }}" {{ nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
                     {% endif %}
                     {% if nested_item['component'] == 'select' %}
                         <select class="form-control" id="{{ nested_item['name'] }}">
@@ -63,10 +73,10 @@
                     <div class="form-group">
                         <label class="col-form-label">{{ extra_nested_item['label'] }}</label>
                         {% if extra_nested_item['component'] in ['input', 'text', 'url'] %}
-                            <input class="form-control" type="text" name="{{ extra_nested_item['name'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                            <input class="form-control" type="text" name="{{ extra_nested_item['name'] }}" value="{{ extra_nested_item['value'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
                         {% endif %}
                         {% if extra_nested_item['component'] == 'number' %}
-                            <input class="form-control" type="number" name="{{ extra_nested_item['name'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
+                            <input class="form-control" type="number" name="{{ extra_nested_item['name'] }}" value="{{ extra_nested_item['value'] }}" {{ extra_nested_item.get('validate', [{'type': ''}])[0]['type'] }}>
                         {% endif %}
                         {% if extra_nested_item['component'] == 'select' %}
                             <select class="form-control" id="{{ extra_nested_item['name'] }}">
